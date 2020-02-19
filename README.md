@@ -47,7 +47,7 @@ See the `default.toml` file in this repository to understand all of the possible
 user         = "altec"                      <----- The user who owns the accurev install directory and executes the installation script
 userid       = 9999252                          <----- The user's unix id
 group        = "altec"                      <----- The group who owns the accurev install directory and executes the installation script
-#INSTALL_DIR = "/proj/fccaltec/tmp[VERSION]"  <----- Path to store install files during install
+#INSTALL_DIR = "/proj/altec/tmp[VERSION]"  <----- Path to store install files during install
 
 [caltec]
 port         = 6599 <----- The port the report server listens on
