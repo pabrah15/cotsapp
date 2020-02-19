@@ -1,0 +1,17 @@
+{{cfg.devdb.dbHost}}_{{cfg.devdb.sid}} =
+  (DESCRIPTION = (ADDRESS_LIST =
+     (ADDRESS = (PROTOCOL = TCP)(HOST = {{cfg.devdb.fqdn}}))
+                (PORT = {{cfg.devdb.dbPort}})))
+    (CONNECT_DATA = (SERVICE_NAME = {{cfg.devdb.sid}})))
+
+{{cfg.qadb.dbHost}}_{{cfg.qadb.sid}} =
+  (DESCRIPTION = (ADDRESS_LIST =
+     (ADDRESS = (PROTOCOL = TCP)(HOST = {{cfg.qadb.fqdn}})
+                (PORT = {{cfg.qadb.dbPort}})))
+    (CONNECT_DATA = (SERVICE_NAME = {{cfg.qadb.sid}})))
+
+{{cfg.proddb.dbHost}}_{{cfg.proddb.sid}} =
+  (DESCRIPTION = (ADDRESS_LIST =
+     (ADDRESS = (PROTOCOL = TCP)(HOST = {{cfg.proddb.fqdn}})
+                (PORT = {{cfg.proddb.dbPort}})))
+    (CONNECT_DATA = (SERVICE_NAME = {{cfg.proddb.sid}})))

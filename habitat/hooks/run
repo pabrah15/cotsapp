@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# redirect stderr
+
+exec 2>&1
+
+# Example of curl to retrieve secrets from vault
+# curl --header "X-Vault-Token: {{cfg.vault.token}}" https://{{cfg.vault.address}}:{{cfg.vault.port}}/v1/{{cfg.vault.path}}
+
+# Create Log file if it does not exist
+
+[ -e /{{cfg.proj_dir}}/{{cfg.user}}/caltec.log ] || su {{cfg.user}} -c "touch  /{{cfg.proj_dir}}/{{cfg.user}}/caltec.log"
+
+# Create group and user if they dont exist
+
+if grep {{cfg.user}} /etc/group
+ then :
+ else groupadd  -g {{cfg.userid}} {{cfg.user}}
+ echo "Group Created" >>  /{{cfg.proj_dir}}/{{cfg.user}}/caltec.log
+fi
+
+if grep {{cfg.user}} /etc/passwd
+ then :
+ else useradd -s /bin/bash -g {{cfg.userid}} -u {{cfg.userid}} -c "F Ccaltec" -d  /{{cfg.homemount}}/{{cfg.user}} {{cfg.user}}
+      echo "user Added" >>  /{{cfg.proj_dir}}/{{cfg.user}}/caltec.log
+fi
+
+# Change permissions on log file
+
+[ `stat -c "%U" /{{cfg.proj_dir}}/{{cfg.user}}/caltec.log` == {{cfg.user}} ] || chown {{cfg.user}} /{{cfg.proj_dir}}/{{cfg.user}}/caltec.log
+
+
+# Watch the log  for events 
+su {{cfg.user}} -c "tail -f  /{{cfg.proj_dir}}/{{cfg.user}}/caltec.log"

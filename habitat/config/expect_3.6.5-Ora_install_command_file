@@ -1,0 +1,885 @@
+system "INSTALL_DIR=`ls -d /{{cfg.proj_dir}}/{{cfg.user}}/tmp{{pkg.version}}/*{{pkg.version}}*|cut -d '/' -f5`;export INSTALL_DIR"
+set INSTALL_DIR $env(INSTALL_DIR)
+set CALLTECH_BASE $env(CALLTECH_BASE)
+set CALLTECH_BASE $env(CALLTECH_HOME)
+set ORACLE_HOME $env(ORACLE_HOME)
+set timeout 400
+system "cd /{{cfg.proj_dir}}/{{cfg.user}}/tmp{{pkg.version}}/$INSTALL_DIR"
+spawn /bin/sh -c "export INSTALL_DIR ORACLE_HOME CALLTECH_BASE CALLTECH_HOME CALLTECH_VERSION;\
+     source /{{cfg.homemount}}/{{cfg.user}}/.profile;cd /{{cfg.proj_dir}}/{{cfg.user}}/tmp{{pkg.version}}/$INSTALL_DIR;\
+     /{{cfg.proj_dir}}/{{cfg.user}}/tmp{{pkg.version}}/$INSTALL_DIR/install.sh"
+expect {
+
+       # Press enter to continue, or Ctrl+C
+       #
+       "Press enter to continue, or Ctrl+C*" {
+       send -- "\r" 
+       #
+       }
+
+       # The calltech base directory already exists.
+       # You may be writing over a previous install. Proceed? (Y/N) [Y]:
+       #timeout { send_user "\Continuing Install\n" }
+       "*writing over a previous install. Proceed?*:" {
+       send -- "Y\r" 
+       #
+       }
+
+       # The calltech base directory already exists.
+       # You may be writing over a prevoius install. proceed? (Y/N) [Y]:
+       #
+       #timeout { send_user "\Continuing Install\n" }
+       "*may be writing over a prevoius install. proceed*:" {
+       send -- "Y\r" 
+       #
+       }
+      
+    
+       #  Install Modules
+       #  2. Setup SQL Server Database
+       #  3. Setup Oracle Database
+       #  4. Setup PostgreSQL Database
+       #  5. Install CallTech Server 3.6.5 (scripts, reports, etc.)
+       "*nter the number of the place you want to*" {
+       send -- "3\r"
+       #
+       }
+
+       # ORACLE_SID is not set.
+       # Please enter the value for ORACLE_SID:
+       #
+       #
+       "*lease enter the value for ORACLE_SI*" {
+       send -- "{{cfg.devdb.sid}}\r" 
+       #
+       }
+
+       # Installing DBD-Oracle...
+       # Please provide the details for your database:
+       # Server/Host [ito02****]:
+       "*erver/Host*" {
+       send -- "{{cfg.devdb.fqdn}}\r" 
+       #
+       }
+
+       # Port [1521]:
+ 
+       "*ort *" {
+       send -- "{{cfg.db.dbPort}}\r"
+       #
+       }
+
+       # Oracle SID [BTTCD1]:
+       # 
+  
+       "*racle SID*" {
+       send -- "{{cfg.devdb.sid}}\r" 
+       #
+       }
+       
+       # User Name []:
+  
+       "*ser Name *" {
+       send -- "{{cfg.db.dbUser}}\r" 
+       #
+       }
+
+       # Password:
+       # 
+        "*assword*" {
+       send -- "{{cfg.db.dbPassword}}\r"  
+       #
+       }
+ 
+  
+       # Would you like to create the tablespaces? (Y/N) [Y]:
+       #
+       # 
+       "*ould you like to create the tablespac*" {
+       send -- "Y\r"  
+       #
+       }
+
+       #  Create ROLLBACK tablespace? (Y/N) [Y]:
+         "*reate ROLLBACK tablespace?*" {
+       send -- "Y\r"  
+       #
+       }
+
+       #  Enter the Directory you want to put this tablespace in []:
+       # 
+       # 
+       "*nter the Directory you want to put this tablespace in*" {
+       send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+       #
+      }
+
+      # What size would you like to use [500M]:
+       # 
+       # 
+       "*at size would you like to use*" {
+       send -- "\r" 
+       #
+       }
+
+       # What is the initial default storage size [25M]:
+       # 
+       # 
+       "*at is the initial default storage size*" {
+       send -- "\r" 
+       #
+      }
+
+
+  # What is the next default storage size [25M]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  #  Create CALLTECH_TEMPORARY tablespace? (Y/N) [Y]:
+  # 
+  "*reate CALLTECH_TEMPORARY tablespace*" {
+   send -- "Y\r" 
+   #
+}
+
+
+  #  Enter the Directory you want to put this tablespace in []:
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+  # What size would you like to use [500M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  #  Create CALLTECH_PARMS tablespace? (Y/N) [Y]:
+  # 
+   "*reate CALLTECH_PARMS tablespace*" {
+   send -- "Y\r" 
+   #
+}
+
+
+  #  Enter the Directory you want to put this tablespace in []:
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+  # What size would you like to use [500M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+  # What is the initial default storage size [25M]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the next default storage size [25M]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  #  Create CALLTECH_REPORTS tablespace? (Y/N) [Y]:
+  # 
+   "*reate CALLTECH_REPORTS tablespace*" {
+   send -- "Y\r" 
+   #
+}
+
+
+  #  Enter the Directory you want to put this tablespace in []:
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+  # What size would you like to use [500M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [25M]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the next default storage size [25M]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  #  Create the CALLTECH_MASTER tablespaces? (Y/N) [Y]:
+  # 
+   "*reate the CALLTECH_MASTER tablespaces*" {
+   send -- "Y\r" 
+   #
+   
+
+}
+
+
+  #  Enter the Directory you want to put this tablespace in []:
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [25M]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+
+  # What is the next default storage size [25M]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+
+  #  ***CALLTECH_MAST_IND Tablespace***
+  #  Enter the Directory you want to put this tablespace in []:
+  # 
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+
+  # What size would you like to use [500M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  #  Create the CALLTECH_ACTIVITY tablespaces? (Y/N) [Y]:
+  # 
+   "*reate the CALLTECH_ACTIVITY tablespaces*" {
+   send -- "Y\r" 
+   #
+}
+
+
+  #  Enter the Directory you want to put this tablespace in []:
+  "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the next default storage size [1024K]:
+  # 
+  "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  #  ***CALLTECH_ACTIVITY_INDEX Tablespace***
+  #  Enter the Directory you want to put this tablespace in []:
+  # 
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+
+  # What size would you like to use [500M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  #  Create the CALLTECH_ASUM tablespaces? (Y/N) [Y]:
+  # 
+   "*reate the CALLTECH_ASUM tablespaces?*" {
+   send -- "Y\r" 
+   #
+}
+
+
+  #  Enter the Directory you want to put this tablespace in []:
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  #  ***CALLTECH_ASUM_INDEX Tablespace***
+  #  Enter the Directory you want to put this tablespace in []:
+  # 
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+
+  # What size would you like to use [500M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+  #  Create CALLTECH_SAK tablespaces? (Y/N) [Y]:
+  # 
+   "*reate CALLTECH_SAK tablespace*" {
+   send -- "Y\r" 
+   #
+}
+
+  #  Enter the Directory you want to put this tablespace in []:
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+  # ***CALLTECH_SAK_INDEX Tablespace***
+  #  Enter the Directory you want to put this tablespace in []:
+  # 
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r"
+   # 
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r"
+   # 
+
+}
+
+  #  Create CALLTECH_RUNTIME tablespace? (Y/N) [Y]:
+  # 
+   "*eate CALLTECH_RUNTIME tablespace*" {
+   send -- "Y\r" 
+   #
+}
+
+
+ 
+  #  Enter the Directory you want to put this tablespace in []:
+  # 
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+  "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+  #  Create CALLTECH_INDICES tablespace? (Y/N) [Y]:
+  # 
+   "*reate CALLTECH_INDICES tablespace*" {
+   send -- "Y\r" 
+   #
+}
+
+ 
+  #  Enter the Directory you want to put this tablespace in []:
+  # 
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  #  Create CALLTECH_PROB tablespaces? (Y/N) [Y]:
+  # 
+   "*reate CALLTECH_PROB tablespaces*" {
+   send -- "Y\r" 
+   #
+}
+
+
+ 
+  #  Enter the Directory you want to put this tablespace in []:
+  # 
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r"
+   # 
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+
+  # What is the next default storage size [1024K]:
+  # 
+  "*hat is the next default storage size*" {
+   send -- "\r" 
+  #
+
+}
+
+
+
+  #  ***CALLTECH_PROB_IND Tablespace***
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r"
+    # 
+}
+
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+}
+
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+  #
+
+}
+
+
+  #  Create CALLTECH_ADMIN tablespace? (Y/N) [Y]::
+  # 
+   "*reate CALLTECH_ADMIN tablespace*" {
+   send -- "Y\r" 
+   #
+
+}
+
+
+ 
+  #  Enter the Directory you want to put this tablespace in []:
+  # 
+   "*nter the Directory you want to put this tablespace in*" {
+   send -- "/{{cfg.homemount}}/{{cfg.user}}/{{cfg.db.tspacedir}}\r" 
+   #
+}
+
+
+  # What size would you like to use [1000M]:
+  # 
+  # 
+   "*at size would you like to use*" {
+   send -- "\r" 
+   #
+
+}
+
+
+  # What is the initial default storage size [1024K]:
+  # 
+  # 
+   "*at is the initial default storage size*" {
+   send -- "\r" 
+   #
+
+}
+
+
+
+  # What is the next default storage size [1024K]:
+  # 
+   "*hat is the next default storage size*" {
+   send -- "\r" 
+  #
+}
+
+
+  # The Oracle creation scripts are ready. You can inspect them in the following location:
+  # Tablespaces:
+  # Would you like to run the scripts now? (Y/N) [Y]: 
+   "*ould you like to run the scripts now*" {
+   send -- "Y\r" 
+   #
+}
+
+
+  # Executing '/proj/fccaltec/CallTech-server-3.6.5/database/oracle/tscreate.sql'...
+  # SQL*Plus: Release 12.2.0.1.0 Production on Wed Jul 17 10:02:52 2019
+  # Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+  #
+   "*nter user-name*" {
+   send -- "{{cfg.db.dbUser}}\r" 
+   #
+}
+
+
+  # Enter password:
+  # 
+   "*nter password*" {
+   send -- "{{cfg.db.dbPassword}}\r" 
+   #
+}
+
+
+  # Enter user-name:
+  # 
+   "*nter user-name*" {
+   send -- "{{cfg.db.dbUser}}\r" 
+   #
+}
+
+  # Enter password:
+  # 
+   "*nter password*" {
+   send -- "{{cfg.db.dbPassword}}\r" 
+   #
+}
+
+
+  # Enter user-name:
+  # 
+   "*nter user-name*" {
+   send -- "{{cfg.db.dbUser}}\r" 
+   #
+}
+
+
+  # Enter password:
+  # 
+   "*nter password*" {
+   send -- "{{cfg.db.dbPassword}}\r" 
+   #
+}
+
+
+  # Enter user-name:
+  # 
+  "*nter user-name*" {
+   send -- "{{cfg.db.dbUser}}\r" 
+   #
+}
+
+
+  # Enter password:
+  # 
+  "*nter password*" {
+   send -- "{{cfg.db.dbPassword}}\r"
+   #
+}
+
+
+  # Oracle installation complete. Press enter to continue...
+  # 
+   "*racle installation complete. Press enter to continue.*" {
+   send -- "\r"
+   #
+}
+}

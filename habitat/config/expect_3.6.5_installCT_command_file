@@ -1,0 +1,79 @@
+set INSTALL_DIR $env(INSTALL_DIR)
+set CALLTECH_BASE $env(CALLTECH_BASE)
+set CALLTECH_BASE $env(CALLTECH_HOME)
+set ORACLE_HOME $env(ORACLE_HOME)
+set CALLTECH_VERSION {{pkg.version}}
+set PATH $env(PATH)
+set PATH $env(LD_LIBRARY_PATH)
+set HOME $env(HOME)
+set DB_USERNAME $env(DB_USERNAME)
+set DB_PASSWORD $env(DB_PASSWORD)
+set itr 7
+set timeout 400
+#set DB_USERNAME [lindex $argv 0]
+#set DB_PASSWORD [lindex $argv 1]
+system "cd /{{cfg.proj_dir}}/{{cfg.user}}/tmp{{pkg.version}}/`ls -d /{{cfg.proj_dir}}/{{cfg.user}}/tmp{{pkg.version}}/*{{pkg.version}}*|cut -d '/' -f5`"
+spawn /bin/sh -c "export HOME PATH LD_LIBRARY_PATH INSTALL_DIR ORACLE_HOME CALLTECH_BASE CALLTECH_HOME \
+      CALLTECH_VERSION DB_USERNAME DB_PASSWORD;\
+     cd /{{cfg.proj_dir}}/{{cfg.user}}/tmp{{pkg.version}}/$INSTALL_DIR;\
+     /{{cfg.proj_dir}}/{{cfg.user}}/tmp{{pkg.version}}/$INSTALL_DIR/install.sh"
+
+
+
+
+
+expect {
+  #  Install Modules
+  #  2. Setup SQL Server Database
+  #  3. Setup Oracle Database
+  #  4. Setup PostgreSQL Database
+  #  5. Install CallTech Server 3.6.5 (scripts, reports, etc.)
+  "*nter the number of the place you want to*" {
+   send -- "5\r" }
+}
+
+
+
+while { $itr <= 9 } {  
+  expect {
+       #  Install Modules
+       #  2. Setup SQL Server Database
+       #  3. Setup Oracle Database
+       #  4. Setup PostgreSQL Database
+       #  5. Install CallTech Server 3.6.5 (scripts, reports, etc.)# Press enter to continue, or Ctrl+C
+       timeout 10
+       #"*the number of the place you want to*" { send -- "5\r" }
+       "*atabase Platfor*" { send -- "{{cfg.caltec.dbtype}}\r" }
+       "*lease enter the value for ORACLE_SI*" { send -- "{{cfg.devdb.sid}}\r" }
+       "*erver/Host*" { send -- "{{cfg.devdb.fqdn}}\r" }
+       "*ort*{{cfg.db.dbPort}}*" { send -- "{{cfg.db.dbPort}}\r" }
+       "*racle SID*" { send -- "{{cfg.devdb.sid}}\r" }
+       "*ser Name*" { send -- "${DB_USERNAME}\r" }
+       "*assword*" { send -- "${DB_PASSWORD}\r" }
+       "*nter choice*" { send -- "2\r" }
+       "*ould you like to configure Calltech to use your database*" { send -- "Y\r" }
+       "*ould you like to load a generic configuration*" { send -- "N\r" }
+       "*ould you like to install the support scripts*" { send -- "Y\r" }
+       "*ould you like to configure the reports daemon*" { send -- "Y\r" }
+       "*hat port would you like the Daemon to run on*" { send -- "{{cfg.caltec.port}}\r" }
+       "*lease enter the name of your compan*" { send -- "{{cfg.caltec.orgname}}\r" }
+       "*ress enter to continue*" { 
+              send -- "\r" 
+              set itr 10
+              }
+       }
+       
+ }
+
+
+ expect {
+  #  Install Modules
+  #  2. Setup SQL Server Database
+  #  3. Setup Oracle Database
+  #  4. Setup PostgreSQL Database
+  #  5. Install CallTech Server 3.6.5 (scripts, reports, etc.)
+  timeout 10
+  timeout { send_user "\Continuing Perl Install\n" } 
+  "*the number of the place you want to*" {
+   send -- "Q\r"  }
+}

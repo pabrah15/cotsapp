@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# define default return code as 0
+rc=3
+
+
+# Use ctWebServices to get status
+if [ -x $(su - {{cfg.user}} -c "command -v ctWebServices") ]
+ then
+
+  STATUS=$(su - {{cfg.user}} -c "ctWebServices status|cut -f3-4 -d ' '")
+ 
+
+  # Set exit code based on status
+  case ${STATUS} in
+    'is running')
+      rc=0 ;;
+    'not running')
+      rc=2 ;;
+  esac
+
+ else
+  echo "Cannot find ctWebServices"
+fi
+
+exit $rc

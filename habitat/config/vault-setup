@@ -1,0 +1,64 @@
+#!/bin/bash -x
+
+# redirect stderr
+exec 2>&1
+
+# load vault and create approle etc
+if ls /hab/pkgs/fc-infra/vault/*/*|grep default.toml
+then
+  
+  export VAULT_ADDR="http://$(curl --silent localhost:9631/services/vault/default | jq -r .sys.ip):$(curl --silent localhost:9631/services/vault/default/config | jq .listener.port)"
+  until [ "$(vault status --format json | jq .initialized)" == true ] &> /dev/null; do echo "Waiting for Vault..."; sleep 1; done
+  export VAULT_TOKEN="$(curl --silent localhost:9631/services/vault/default/config | jq -r .token)"
+  ####################
+  # Setup Vault Policies and Roles
+
+  # Variables to ensure following script remains consistent
+  export ROLE_NAME=fccaltec
+  export POLICY_NAME=fccaltec
+  export SECRET_PATH=secret/fc-infra/{{pkg.name}}
+    
+  # Enable the AppRole Auth Method
+  vault auth list|grep 'approle/' || vault auth enable approle
+
+  # Create Vault Policy that allows login and reading of secret path
+  vault policy write "${POLICY_NAME}" - <<EOF
+   path "auth/approle/role/${ROLE_NAME}/login" {
+   capabilities = [ "create" ]
+  }
+
+  path "${SECRET_PATH}" {
+  capabilities = [ "read" ]
+  }
+EOF
+
+   # Create a named role, note it uses the above policy!
+   vault write auth/approle/role/"${ROLE_NAME}" \
+    secret_id_ttl=15m \
+    secret_id_num_uses=40 \
+    token_ttl=15m \
+    token_num_uses=40 \
+    policies="${POLICY_NAME}"
+
+ # Create the secrets
+   vault kv put "${SECRET_PATH}" \
+   database-username={{cfg.db.dbUser}} \
+   database-password=DBPassVault
+
+  ####################
+
+fi
+# Local vault server setup ends here
+
+# create user toml file 
+
+[ -d /hab/user/{{pkg.name}}/config ] || mkdir -p /hab/user/{{pkg.name}}/config
+cat > /hab/user/{{pkg.name}}/config/user.toml <<EOF
+[vault]
+enabled     =  "true"
+address     = "${VAULT_ADDR}"
+rolename    = "${ROLE_NAME}"
+role-id     = "$(vault read --format "json" auth/approle/role/${ROLE_NAME}/role-id | jq -r .data.role_id)"
+secret-id   = "$(vault write -f --format "json" auth/approle/role/${ROLE_NAME}/secret-id | jq -r .data.secret_id)"
+secret-path = "${SECRET_PATH}"
+EOF
