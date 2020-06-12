@@ -9,7 +9,7 @@ exec 2>&1
 # Variables 
 
 export PROJECT_DIR="/{{cfg.proj_dir}}/{{cfg.user}}"
-export CALTEC_BINARY="CallTech-server-{{pkg.version}}.tar.gz"
+export CALTEC_BINARY="dfffr-{{pkg.version}}.tar.gz"
 
 # Create group, user and user home 
 
