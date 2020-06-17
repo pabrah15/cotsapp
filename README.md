@@ -1,4 +1,4 @@
-# caltech
+# Cots App
 
 This repo contains the habitat package for Calltech server. This package is intended to facilitate the automated install of tec software . This repo also contains a [Vagrant](https://www.vagrantup.com/docs/) directory which can be used to test the package in a developer's local environment.
 
