@@ -21,9 +21,9 @@ then
 
   # Variables to ensure following script remains consistent
   
-  export ROLE_NAME=fccaltec
-  export POLICY_NAME=fccaltec
-  export SECRET_PATH=secret/fc-infra/{{pkg.name}}
+  export ROLE_NAME=fcvv
+  export POLICY_NAME=fCVV
+  export SECRET_PATH=secret/fc-ivv/{{pkg.name}}
   
   # Enable the AppRole Auth Method
   vault auth list|grep 'approle/' || vault auth enable approle
@@ -50,7 +50,7 @@ EOF
  # Create the secrets
    vault kv put "${SECRET_PATH}" \
    database-username={{cfg.db.dbUser}} \
-   database-password=DBPassVault
+   database-password=ddd
 
   ####################
 
