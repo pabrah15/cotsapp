@@ -5,7 +5,7 @@ exec 2>&1
 
 
 # load vault and create approle etc
-if ls /hab/pkgs/fc-infra/vault/*/*|grep default.toml
+if ls /hab/pkgs/fc/vault/*/*|grep default.toml
 then
   
   export VAULT_ADDR="http://{{sys.ip}}:{{cfg.vault.port}}"
